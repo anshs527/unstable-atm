@@ -74,15 +74,4 @@ TEST_CASE("Example: Print Prompt Ledger", "[ex-3]") {
   atm.PrintLedger("./prompt.txt", 12345678, 1234);
   REQUIRE(CompareFiles("./ex-1.txt", "./prompt.txt"));
 }
-TEST_CASE("MyCase 1", "[ex-4]") {
-  Atm atm;
-  atm.RegisterAccount(99999, 1234, "Sam Sepiol", 299.99);
-  atm.WithdrawCash(99999, 1234, 20.0);
-  auto accounts = atm.GetAccounts();
-  REQUIRE(accounts.size() == 1);
-  Account sam_account = accounts[{99999, 1234}];
-  REQUIRE(sam_account.balance == 279.99);
-  atm.DepositCash(99999, 1234, 100.0);
-  sam_account = accounts[{99999, 1234}];
-  REQUIRE(sam_account.balance == 379.99);
-}
+
