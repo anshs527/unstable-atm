@@ -75,3 +75,75 @@ TEST_CASE("Example: Print Prompt Ledger", "[ex-3]") {
   REQUIRE(CompareFiles("./ex-1.txt", "./prompt.txt"));
 }
 
+TEST_CASE("Create alr existing account", "[ex-4]") {
+  Atm atm;
+  atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
+  auto accounts = atm.GetAccounts();
+  REQUIRE(accounts.contains({12345678, 1234}));
+  REQUIRE(accounts.size() == 1);
+
+  // Try to create the same account again. Creates a new Account struct with the
+  // specified owner_name and balance and inserts it into the stored_accounts_
+  // map, with the key being an std::pair<unsigned int, unsigned int> of the
+  // card_num and pin. Additionally creates a new entry in the
+  // account_transactions_ map with the key being an std::pair<unsigned int,
+  // unsigned int> of the card_num and pin and the value being an empty
+  // std::vector<std::string>. If stored_accounts_ already contains an entry
+  // with the specified card_num and pin, throw an std::invalid_argument
+  // exception.
+  REQUIRE_THROWS_AS(atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30),
+                    std::invalid_argument);
+}
+
+// Test case for withdrawing more than the balance
+TEST_CASE("Withdraw more than balance", "[ex-5]") {
+  Atm atm;
+  atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
+  // Try to withdraw more than the balance. If the account does not exist, throw
+  // an std::invalid_argument exception. If the account exists but the balance
+  // is less than the amount to withdraw, throw an std::invalid_argument
+  // exception.
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12345678, 1234, 400.00),
+                    std::runtime_error);
+}
+// Test case for withdrawing negative amount
+TEST_CASE("Withdraw negative amount", "[ex-6]") {
+  Atm atm;
+  atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
+  // Try to withdraw negative amount. If the account does not exist, throw
+  // an std::invalid_argument exception. If the account exists but the balance
+  // is less than the amount to withdraw, throw an std::invalid_argument
+  // exception.
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12345678, 1234, -20.0),
+                    std::invalid_argument);
+}
+// Test case for withdrawing more than the balance
+TEST_CASE("Withdraw more than balance", "[ex-5]") {
+  Atm atm;
+  atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
+  // Try to withdraw more than the balance. If the account does not exist, throw
+  // an std::invalid_argument exception. If the account exists but the balance
+  // is less than the amount to withdraw, throw an std::invalid_argument
+  // exception.
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12345678, 1234, 400.00),
+                    std::runtime_error);
+}
+// Test case for withdrawing from non-existent account
+TEST_CASE("Withdraw from non-existent account", "[ex-7]") {
+  Atm atm;
+  // Creates a new transaction record, and pushes it back to the
+  // std::vector<std::string> associated with the specified card_num and pin in
+  // the account_transactions_ map. If no account exists with the passed in
+  // card_num and pin, an std::invalid_argument exception is thrown.
+  // Additionally, an std::invalid_argument exception is thrown when a negative
+  // amount is passed in.
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12345679, 1234, 20.0),
+                    std::invalid_argument);
+}
+TEST_CASE("Print ledger for non-existent account", "[ex-8]") {
+  Atm atm;
+  // If no account exists with the passed in card_num and pin, an
+  // std::invalid_argument exception is thrown.
+  REQUIRE_THROWS_AS(atm.PrintLedger("./prompt.txt", 12345679, 1234),
+                    std::invalid_argument);
+}
